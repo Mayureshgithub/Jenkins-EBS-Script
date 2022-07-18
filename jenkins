@@ -1,0 +1,27 @@
+#!/bin/bash
+sudo apt update -y
+sudo apt install default-jre -y
+sudo apt install nfs-common -y
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo apt update -y
+sudo mkdir -p /var/lib/jenkins
+sudo mount -t nfs <nfs-dns>:/ /var/lib/jenkins 
+####echo "${aws_efs_file_system.this.dns_name}:/ /var/lib/jenkins nfs4 defaults 0 0" | sudo tee -a /etc/fstab   ### I exclude this line
+sudo apt install jenkins -y
+sudo chown -R jenkins:jenkins /var/lib/jenkins
+sudo systemctl start jenkins
+
+4. Make Auto Scaling Group with -
+Previously Created Launch Template, Protcol - TCP 8080 or HTTP 8080
+
+5. Create Load Balancer with -
+Listner TCP 80 or HTTP 80
+
+6. Hit LB DNS to get Jenkins Home Page
+
+7. Make sure that EFS is mount on desired directory and jenkins is installed in it.
+
+To get initial Admin Password -
+sudo -i
+cat /var/lib/jenkins/secrets/initialAdminPassword
